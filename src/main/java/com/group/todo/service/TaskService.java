@@ -29,7 +29,6 @@ public class TaskService {
         try {
             return taskRepo.save(task);
         } catch (DataIntegrityViolationException e) {
-            System.out.println(e.getMessage());
             throw new IllegalArgumentException();
         }
     }
