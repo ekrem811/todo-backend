@@ -16,11 +16,13 @@ import com.group.todo.entites.Task;
 import com.group.todo.service.TaskService;
 
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api")
 public class TaskController {
 
     private final TaskService taskService;
