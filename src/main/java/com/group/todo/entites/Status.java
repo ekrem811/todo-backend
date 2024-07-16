@@ -12,7 +12,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Status {
+public class Status extends Base{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,12 +34,14 @@ public class Status {
         this.task = task;
     }
 
-    public Status(String name, List<Task> task) {
+    public Status(String name, User createdBy, List<Task> task) {
+        super(createdBy);
         this.name = name;
         this.task = task;
     }
 
     public Status() {
+        super();
     }
 
     public int getId() {

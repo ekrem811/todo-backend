@@ -6,22 +6,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Task {
+public class Task extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "created_by", nullable = false)
-    private User createdBy;
 
     @ManyToMany
     @JoinTable(name = "task_assignee")
@@ -36,22 +30,14 @@ public class Task {
     }
 
     public Task(String name, User createdBy, List<User> assignees) {
+        super(createdBy);
         this.name = name;
-        this.createdBy = createdBy;
         this.assignee = assignees;
     }
 
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public Task() {
+        super();
     }
-
 
     public int getId() {
         return id;
@@ -61,7 +47,6 @@ public class Task {
         return name;
     }
 
-
     public void setId(int id) {
         this.id = id;
     }
@@ -69,8 +54,5 @@ public class Task {
     public void setName(String name) {
         this.name = name;
     }
-
-
-
 
 }

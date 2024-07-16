@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails {
+public class User extends Base implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
