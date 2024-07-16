@@ -20,7 +20,7 @@ public class Task {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "created_by", nullable = true)
+    @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
     @ManyToMany
