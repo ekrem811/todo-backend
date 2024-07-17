@@ -6,15 +6,16 @@ import org.springframework.stereotype.Service;
 
 import com.group.todo.entites.Status;
 import com.group.todo.repository.StatusRepo;
+import com.group.todo.util.AuthUtil;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class StatusService {
 
     private final StatusRepo statusRepo;
-
-    public StatusService(StatusRepo statusRepo) {
-        this.statusRepo = statusRepo;
-    }
+    private final AuthUtil authUtil;
 
     public Iterable<Status> getAllStatuses() {
         return statusRepo.findAll();
@@ -25,6 +26,7 @@ public class StatusService {
     }
 
     public Status postNewStatus(Status status) throws IllegalArgumentException {
+        status.setCreatedBy(authUtil.getCurrentUser());
         return statusRepo.save(status);
     }
 

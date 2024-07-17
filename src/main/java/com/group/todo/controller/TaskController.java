@@ -72,8 +72,6 @@ public class TaskController {
             return new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
-        } catch (AuthenticationException e) {
-            return new ResponseEntity<String>(e.getMessage(),HttpStatus.FORBIDDEN);
         }
     }
 

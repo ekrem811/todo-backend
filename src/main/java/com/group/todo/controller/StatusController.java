@@ -1,5 +1,7 @@
 package com.group.todo.controller;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import com.group.todo.DTO.StatusRequestDTO;
+import com.group.todo.DTO.StatusResponseDTO;
 import com.group.todo.entites.Status;
 import com.group.todo.service.StatusService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,14 +35,24 @@ public class StatusController {
     }
 
     @GetMapping("/statuses")
-    public ResponseEntity<Iterable<Status>> getAllStatutes() {
-        return new ResponseEntity<>(this.statusService.getAllStatuses(), HttpStatus.OK);
+    public ResponseEntity<Iterable<StatusResponseDTO>> getAllStatutes() {
+        
+        Collection<StatusResponseDTO> list = new LinkedList<>();
+        for (Status status : statusService.getAllStatuses())
+            list.add(new StatusResponseDTO(status.getId(), status.getName(), status.getCreatedBy().getId()));
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
     
     @GetMapping("/status/{id}")
-    public ResponseEntity<Status> getTaskId(@PathVariable Integer id) {
+    public ResponseEntity<StatusResponseDTO> getTaskId(@PathVariable Integer id) {
+
         try {
-            return new ResponseEntity<Status>( statusService.getStatusById(id), HttpStatus.OK);
+            Status status = statusService.getStatusById(id);
+            StatusResponseDTO responseDTO = new StatusResponseDTO();
+            responseDTO.setId(status.getId());
+            responseDTO.setName(status.getName());
+            responseDTO.setCreatorId(status.getCreatedBy().getId());
+            return new ResponseEntity<StatusResponseDTO>(responseDTO, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (NoSuchElementException e) {
@@ -47,18 +61,35 @@ public class StatusController {
     }
 
     @PostMapping("/status")
-    public ResponseEntity<?> postNewTask(@RequestBody Status status) {
+    public ResponseEntity<?> postNewTask(@RequestBody StatusRequestDTO statusRequestDTO) {
+        Status status = new Status();
         try {
-            return new ResponseEntity<Status>(statusService.postNewStatus(status), HttpStatus.OK);
+            status.setName(statusRequestDTO.getName());
+
+            Status newStatus = statusService.postNewStatus(status);
+            StatusResponseDTO response = new StatusResponseDTO();
+            response.setCreatorId(newStatus.getCreatedBy().getId());
+            response.setName(newStatus.getName());
+            response.setId(status.getId());
+            return new ResponseEntity<StatusResponseDTO>(response, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/status/{id}")
-    public ResponseEntity<?> putStatusName(@PathVariable Integer id, @RequestBody Status status) {
+    public ResponseEntity<?> putStatusName(@PathVariable Integer id, @RequestBody StatusRequestDTO statusRequestDTO) {
+        Status status = new Status();
         try {
-            return new ResponseEntity<Status>(statusService.putStatusName(id, status), HttpStatus.OK);
+            status.setName(statusRequestDTO.getName());
+            
+            Status newStatus = statusService.putStatusName(id,status);
+
+            StatusResponseDTO response = new StatusResponseDTO();
+            response.setCreatorId(newStatus.getCreatedBy().getId());
+            response.setName(newStatus.getName());
+            response.setId(status.getId());
+            return new ResponseEntity<StatusResponseDTO>(response, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (NoSuchElementException e) {
