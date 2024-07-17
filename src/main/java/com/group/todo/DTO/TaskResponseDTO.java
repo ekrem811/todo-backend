@@ -5,19 +5,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TaskResponseDTO extends TaskRequestDTO {
 
-    public TaskResponseDTO(Integer id, String name, Integer creatorId) {
+    public TaskResponseDTO(Integer id, String name, Integer reporter) {
         super(id, name);
-        this.creatorId = creatorId;
+        this.reporter = reporter;
     }
 
-    private Integer creatorId;
+    private Integer reporter;
 
-    public Integer getCreatorId() {
-        return creatorId;
+    public Integer getReporter() {
+        return reporter;
     }
 
-    public void setCreatorId(Integer creatorId) {
-        this.creatorId = creatorId;
+    public void setReporter(Integer creatorId) {
+        this.reporter = creatorId;
     }
 
 
