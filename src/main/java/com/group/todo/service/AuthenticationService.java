@@ -1,5 +1,6 @@
 package com.group.todo.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,18 +24,24 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    
-    public AuthenticationResponse register(RegisterRequest request) {
-        User user = new User();
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setUsername(request.getUsername());
-        user.setRole(Role.USER);
-        userRepo.save(user);
 
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+    public AuthenticationResponse register(RegisterRequest request) throws Exception {
+        try {
+
+            User user = new User();
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setUsername(request.getUsername());
+            user.setRole(Role.USER);
+            userRepo.save(user);
+
+            var jwtToken = jwtService.generateToken(user);
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .build();
+        } catch (DataIntegrityViolationException e) {
+            System.out.println(e.getCause());
+            throw new Exception("Username have been already taken.");
+        }
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -43,7 +50,7 @@ public class AuthenticationService {
                         request.getUsername(),
                         request.getPassword()));
         var user = userRepo.findUserByUsername(request.getUsername())
-            .orElseThrow();
+                .orElseThrow();
 
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
