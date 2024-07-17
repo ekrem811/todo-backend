@@ -42,7 +42,7 @@ public class TaskController {
     ResponseEntity<Collection<TaskResponseDTO>> getAllTasks() {
         Collection<TaskResponseDTO> list = new LinkedList<>();
         for (Task task : taskService.getAllTasks())
-            list.add(new TaskResponseDTO(task.getId(), task.getName(), task.getCreatedBy().getId()));
+            list.add(new TaskResponseDTO(task.getId(), task.getName(), task.getCreatedBy().getUsername()));
 
         return new ResponseEntity<Collection<TaskResponseDTO>>(list, HttpStatus.OK);
     }
@@ -51,7 +51,7 @@ public class TaskController {
     public ResponseEntity<TaskResponseDTO> getTaskId(@PathVariable Integer id) {
         try {
             Task found = taskService.getTaskById(id);
-            return new ResponseEntity<TaskResponseDTO>(new TaskResponseDTO(found.getId(), found.getName(), found.getCreatedBy().getId()), HttpStatus.OK);
+            return new ResponseEntity<TaskResponseDTO>(new TaskResponseDTO(found.getId(), found.getName(), found.getCreatedBy().getUsername()), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (NoSuchElementException e) {
@@ -66,7 +66,7 @@ public class TaskController {
         try {
             task.setName(taskRequestDTO.getName());
             Task newTask = taskService.postNewTask(task);
-            TaskResponseDTO response = new TaskResponseDTO(newTask.getId(), newTask.getName(), newTask.getCreatedBy().getId());
+            TaskResponseDTO response = new TaskResponseDTO(newTask.getId(), newTask.getName(), newTask.getCreatedBy().getUsername());
             return new ResponseEntity<TaskResponseDTO>(response, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
@@ -81,7 +81,7 @@ public class TaskController {
         try {
             task.setName(requestDTO.getName());
             task = taskService.putTaskName(id, task);
-            return new ResponseEntity<TaskResponseDTO>(new TaskResponseDTO(task.getId() ,task.getName(), task.getCreatedBy().getId()), HttpStatus.OK);
+            return new ResponseEntity<TaskResponseDTO>(new TaskResponseDTO(task.getId() ,task.getName(), task.getCreatedBy().getUsername()), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (NoSuchElementException e) {
