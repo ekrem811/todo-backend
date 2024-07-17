@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "task_assignee")
-public class Task_Assignee {
+public class TaskAssignee {
 
     @Id
     @ManyToOne

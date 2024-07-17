@@ -23,18 +23,18 @@ public class Status extends Base{
 
     @OneToMany
     @JoinTable(name = "task_assignee")
-    private List<Task> task;
+    private List<TaskAssignee> task;
 
 
-    public List<Task> getTask() {
+    public List<TaskAssignee> getTask() {
         return task;
     }
 
-    public void setTask(List<Task> task) {
+    public void setTask(List<TaskAssignee> task) {
         this.task = task;
     }
 
-    public Status(String name, User createdBy, List<Task> task) {
+    public Status(String name, User createdBy, List<TaskAssignee> task) {
         super(createdBy);
         this.name = name;
         this.task = task;
