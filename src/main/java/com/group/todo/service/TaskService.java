@@ -2,17 +2,14 @@ package com.group.todo.service;
 
 import java.util.NoSuchElementException;
 
-import javax.naming.AuthenticationException;
 
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.group.todo.entites.Task;
 import com.group.todo.entites.User;
 import com.group.todo.repository.TaskRepo;
-import com.group.todo.repository.UserRepo;
+import com.group.todo.util.AuthUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class TaskService {
 
     private final TaskRepo taskRepo;
-    private final UserRepo userRepo;
+    private final AuthUtil authUtil;
 
     public Iterable<Task> getAllTasks() {
         return taskRepo.findAll();
@@ -31,26 +28,16 @@ public class TaskService {
         return taskRepo.findById(id).get();
     }
 
-    public Task postNewTask(Task task) throws IllegalArgumentException, AuthenticationException {
+    public Task postNewTask(Task task) throws IllegalArgumentException {
         try {
-            User user = getCurrentUser();
+            User user = authUtil.getCurrentUser();
             task.setCreatedBy(user);
             return taskRepo.save(task);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException();
-        } catch (Exception e) {
-            throw new AuthenticationException();
         }
     }
 
-    private User getCurrentUser() throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
-            return (User) authentication.getPrincipal();
-        }
-        throw new Exception("Authenticated user can't be found");
-
-    }
 
     public Task putTaskName(Integer id, Task toDoItem) throws IllegalArgumentException, NoSuchElementException {
         Task found = taskRepo.findById(id).get();
