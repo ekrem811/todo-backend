@@ -1,8 +1,10 @@
 package com.group.todo.DTO;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskRequestDTO {
@@ -17,14 +19,7 @@ public class TaskRequestDTO {
 
     private Integer id;
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    private Integer assigneeId;
+    private Integer statusId;
 
 }

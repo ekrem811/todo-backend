@@ -39,7 +39,7 @@ public class StatusController {
         
         Collection<StatusResponseDTO> list = new LinkedList<>();
         for (Status status : statusService.getAllStatuses())
-            list.add(new StatusResponseDTO(status.getId(), status.getName(), status.getCreatedBy().getId()));
+            list.add(new StatusResponseDTO(status.getId(), status.getName()));
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
     
@@ -51,7 +51,6 @@ public class StatusController {
             StatusResponseDTO responseDTO = new StatusResponseDTO();
             responseDTO.setId(status.getId());
             responseDTO.setName(status.getName());
-            responseDTO.setCreatorId(status.getCreatedBy().getId());
             return new ResponseEntity<StatusResponseDTO>(responseDTO, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -68,7 +67,6 @@ public class StatusController {
 
             Status newStatus = statusService.postNewStatus(status);
             StatusResponseDTO response = new StatusResponseDTO();
-            response.setCreatorId(newStatus.getCreatedBy().getId());
             response.setName(newStatus.getName());
             response.setId(status.getId());
             return new ResponseEntity<StatusResponseDTO>(response, HttpStatus.OK);
@@ -86,7 +84,6 @@ public class StatusController {
             Status newStatus = statusService.putStatusName(id,status);
 
             StatusResponseDTO response = new StatusResponseDTO();
-            response.setCreatorId(newStatus.getCreatedBy().getId());
             response.setName(newStatus.getName());
             response.setId(status.getId());
             return new ResponseEntity<StatusResponseDTO>(response, HttpStatus.OK);

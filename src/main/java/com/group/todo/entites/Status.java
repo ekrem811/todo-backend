@@ -8,8 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.OneToMany;
 
 @Entity
 public class Status extends Base{
@@ -21,23 +19,9 @@ public class Status extends Base{
     @Column(length = 64, unique = true)
     private String name;
 
-    @OneToMany
-    @JoinTable(name = "task_assignee")
-    private List<TaskAssignee> task;
-
-
-    public List<TaskAssignee> getTask() {
-        return task;
-    }
-
-    public void setTask(List<TaskAssignee> task) {
-        this.task = task;
-    }
-
-    public Status(String name, User createdBy, List<TaskAssignee> task) {
+    public Status(String name, User createdBy) {
         super(createdBy);
         this.name = name;
-        this.task = task;
     }
 
     public Status() {

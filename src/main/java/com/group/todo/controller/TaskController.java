@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException.Forbidden;
 
 import com.group.todo.DTO.TaskRequestDTO;
 import com.group.todo.DTO.TaskResponseDTO;
@@ -39,19 +40,19 @@ public class TaskController {
     }
 
     @GetMapping("/tasks")
-    ResponseEntity<Collection<TaskResponseDTO>> getAllTasks() {
+    public ResponseEntity<Iterable<TaskResponseDTO>> getAllTasks() {
         Collection<TaskResponseDTO> list = new LinkedList<>();
         for (Task task : taskService.getAllTasks())
-            list.add(new TaskResponseDTO(task.getId(), task.getName(), task.getCreatedBy().getUsername()));
+            list.add(new TaskResponseDTO(task));
 
-        return new ResponseEntity<Collection<TaskResponseDTO>>(list, HttpStatus.OK);
+        return new ResponseEntity<Iterable<TaskResponseDTO>>(list, HttpStatus.OK);
     }
 
     @GetMapping("/task/{id}")
     public ResponseEntity<TaskResponseDTO> getTaskId(@PathVariable Integer id) {
         try {
             Task found = taskService.getTaskById(id);
-            return new ResponseEntity<TaskResponseDTO>(new TaskResponseDTO(found.getId(), found.getName(), found.getCreatedBy().getUsername()), HttpStatus.OK);
+            return new ResponseEntity<TaskResponseDTO>(new TaskResponseDTO(found), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (NoSuchElementException e) {
@@ -65,8 +66,8 @@ public class TaskController {
         Task task = new Task();
         try {
             task.setName(taskRequestDTO.getName());
-            Task newTask = taskService.postNewTask(task);
-            TaskResponseDTO response = new TaskResponseDTO(newTask.getId(), newTask.getName(), newTask.getCreatedBy().getUsername());
+            Task newTask = taskService.postNewTask(taskRequestDTO);
+            TaskResponseDTO response = new TaskResponseDTO(newTask);
             return new ResponseEntity<TaskResponseDTO>(response, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
@@ -81,7 +82,7 @@ public class TaskController {
         try {
             task.setName(requestDTO.getName());
             task = taskService.putTaskName(id, task);
-            return new ResponseEntity<TaskResponseDTO>(new TaskResponseDTO(task.getId() ,task.getName(), task.getCreatedBy().getUsername()), HttpStatus.OK);
+            return new ResponseEntity<TaskResponseDTO>(new TaskResponseDTO(task), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (NoSuchElementException e) {
@@ -89,6 +90,36 @@ public class TaskController {
         }
     }
 
+    @PutMapping("/task/status/{id}")
+    public ResponseEntity<TaskResponseDTO> putTaskStatus(@PathVariable Integer id, @RequestBody TaskRequestDTO requestDTO) {
+        try {
+            Task task =  taskService.putTaskStatus(id, requestDTO);
+            TaskResponseDTO response = new TaskResponseDTO(task);
+            return new ResponseEntity<TaskResponseDTO>(response, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Forbidden e) {
+            return new ResponseEntity<>(e.getStatusCode());
+        }
+    }
+
+
+    @PutMapping("/task/assignee/{id}")
+    public ResponseEntity<TaskResponseDTO> putTaskAssignee(@PathVariable Integer id, @RequestBody TaskRequestDTO requestDTO) {
+        try {
+            Task task =  taskService.putTaskAssignee(id, requestDTO);
+            TaskResponseDTO response = new TaskResponseDTO(task);
+            return new ResponseEntity<TaskResponseDTO>(response, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Forbidden e) {
+            return new ResponseEntity<>(e.getStatusCode());
+        }
+    }
 
     @DeleteMapping("/task/{id}")
     public ResponseEntity<?> deleteTask(@PathVariable Integer id) {

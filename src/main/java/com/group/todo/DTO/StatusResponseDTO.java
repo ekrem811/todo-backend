@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StatusResponseDTO extends StatusRequestDTO{
     
-    public StatusResponseDTO(Integer id, String name, Integer creatorId) {
+    public StatusResponseDTO(Integer id, String name) {
         super(id, name);
-        this.creatorId = creatorId;
     }
 
-    private Integer creatorId;
 }
