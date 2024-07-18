@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import io.micrometer.common.lang.NonNull;
 import jakarta.servlet.FilterChain;
@@ -58,6 +59,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (SignatureException e) {
             response.setStatus(401);
         } catch (UsernameNotFoundException e) {
+            response.setStatus(401);
+        } catch (ExpiredJwtException e) {
             response.setStatus(401);
         }
     }
