@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpClientErrorException.Forbidden;
 
 import com.group.todo.DTO.TaskRequestDTO;
@@ -72,7 +73,7 @@ public class TaskService {
     public Task putTaskStatus(Integer id, TaskRequestDTO requestDTO) throws Forbidden {
         User current = authUtil.getCurrentUser();
         Task found = taskRepo.findById(id).get();
-        if (current.getId() != found.getCreatedBy().getId()) 
+        if (current.getId() != found.getCreatedBy().getId())
             throw Forbidden.create(HttpStatus.FORBIDDEN, "User is not allowed the change this taks.", null, null, null);
         Status status = statusRepo.findById(requestDTO.getStatusId()).get();
         found.setStatus(status);
@@ -83,11 +84,65 @@ public class TaskService {
     public Task putTaskAssignee(Integer id, TaskRequestDTO requestDTO) {
         Task found = taskRepo.findById(id).get();
         User current = authUtil.getCurrentUser();
-        if (current.getId() != found.getCreatedBy().getId()) 
+        if (current.getId() != found.getCreatedBy().getId())
             throw Forbidden.create(HttpStatus.FORBIDDEN, "User is not allowed the change this taks.", null, null, null);
         User assignee = userRepo.findById(requestDTO.getAssigneeId()).get();
         found.setAssignee(assignee);
         taskRepo.save(found);
         return found;
+    }
+
+    public Task putTask(Integer id, TaskRequestDTO requestDTO) throws Forbidden {
+        Task found = taskRepo.findById(id).get();
+        User current = authUtil.getCurrentUser();
+        if (current.getId() != found.getCreatedBy().getId()) {
+            if (found.getAssignee() != null && current.getId() == found.getAssignee().getId()) {
+                if (requestDTO.getStatusId() == null) {
+                    found.setStatus(null);
+                } else {
+
+                    Status status;
+                    try {
+                        status = statusRepo.findById(requestDTO.getStatusId()).get();
+                        found.setStatus(status);
+                    } catch (NoSuchElementException e) {
+                        throw new IllegalArgumentException();
+                    }
+                }
+            } else {
+                throw Forbidden.create(HttpStatus.FORBIDDEN, "User is not allowed the change this taks.", null, null,
+                        null);
+            }
+        } else {
+            System.out.println(requestDTO.getName());
+            found.setName(requestDTO.getName());
+            if (requestDTO.getStatusId() == null) {
+                found.setStatus(null);
+            } else {
+
+                Status status;
+                try {
+                    status = statusRepo.findById(requestDTO.getStatusId()).get();
+                    found.setStatus(status);
+                } catch (NoSuchElementException e) {
+                    throw new IllegalArgumentException();
+                }
+            }
+
+            if (requestDTO.getAssigneeId() == null) {
+                found.setAssignee(null);
+            } else {
+
+                User assignee;
+                try {
+                    assignee = userRepo.findById(requestDTO.getAssigneeId()).get();
+                    found.setAssignee(assignee);
+                } catch (NoSuchElementException e) {
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
+
+        return taskRepo.save(found);
     }
 }

@@ -118,6 +118,21 @@ public class TaskController {
         }
     }
 
+    @PutMapping("/task/{id}")
+    public ResponseEntity<TaskResponseDTO> putTask(@PathVariable Integer id, @RequestBody TaskRequestDTO requestDTO) {
+        try {
+            System.out.println(requestDTO.getStatusId());
+            Task task = taskService.putTask(id, requestDTO);
+            return new ResponseEntity<TaskResponseDTO>(new TaskResponseDTO(task), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Forbidden e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
     @DeleteMapping("/task/{id}")
     public ResponseEntity<?> deleteTask(@PathVariable Integer id) {
         try {
