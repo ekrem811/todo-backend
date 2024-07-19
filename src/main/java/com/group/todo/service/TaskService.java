@@ -66,7 +66,12 @@ public class TaskService {
         return found;
     }
 
-    public void deleteTask(Integer id) throws IllegalArgumentException {
+    public void deleteTask(Integer id) throws IllegalArgumentException, Forbidden {
+        User current = authUtil.getCurrentUser();
+        Task found = taskRepo.findById(id).get();
+        if (current.getId() != found.getCreatedBy().getId())
+            throw Forbidden.create(HttpStatus.FORBIDDEN, "User is not allowed the delete this taks.", null, null, null);
+
         taskRepo.deleteById(id);
     }
 
