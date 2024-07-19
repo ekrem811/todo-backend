@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
-@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api")
 public class StatusController {
 

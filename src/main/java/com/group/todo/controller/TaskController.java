@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api")
 public class TaskController {
 
@@ -63,9 +62,7 @@ public class TaskController {
 
     @PostMapping("/task")
     public ResponseEntity<?> postNewTask(@RequestBody TaskRequestDTO taskRequestDTO) {
-        Task task = new Task();
         try {
-            task.setName(taskRequestDTO.getName());
             Task newTask = taskService.postNewTask(taskRequestDTO);
             TaskResponseDTO response = new TaskResponseDTO(newTask);
             return new ResponseEntity<TaskResponseDTO>(response, HttpStatus.OK);
