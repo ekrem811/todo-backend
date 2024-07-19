@@ -1,5 +1,6 @@
 package com.group.todo.service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,6 +17,10 @@ public class UserService {
 
     public UserService(UserRepo userRepo) {
         this.userRepo = userRepo;
+    }
+
+    public List<User> getAllUsers() {
+        return userRepo.findAll();
     }
 
 

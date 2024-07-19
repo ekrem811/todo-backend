@@ -39,7 +39,6 @@ public class AuthenticationService {
                     .token(jwtToken)
                     .build();
         } catch (DataIntegrityViolationException e) {
-            System.out.println(e.getCause());
             throw new Exception("Username have been already taken.");
         }
     }
