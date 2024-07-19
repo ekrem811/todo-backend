@@ -119,9 +119,8 @@ public class TaskController {
     }
 
     @PutMapping("/task/{id}")
-    public ResponseEntity<TaskResponseDTO> putTask(@PathVariable Integer id, @RequestBody TaskRequestDTO requestDTO) {
+    public ResponseEntity<?> putTask(@PathVariable Integer id, @RequestBody TaskRequestDTO requestDTO) {
         try {
-            System.out.println(requestDTO.getStatusId());
             Task task = taskService.putTask(id, requestDTO);
             return new ResponseEntity<TaskResponseDTO>(new TaskResponseDTO(task), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -129,7 +128,7 @@ public class TaskController {
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Forbidden e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(e.getStatusText(),HttpStatus.FORBIDDEN);
         }
     }
 
@@ -140,7 +139,9 @@ public class TaskController {
             return new ResponseEntity<>("Status with id " + id + "deleted.", HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } 
+        } catch (Forbidden e) {
+            return new ResponseEntity<>(e.getStatusText(), HttpStatus.FORBIDDEN);
+        }
     }
     
 }
