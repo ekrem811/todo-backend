@@ -9,15 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TaskRequestDTO {
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    private Integer id;
     private String name;
     private Integer assigneeId;
     private Integer statusId;
