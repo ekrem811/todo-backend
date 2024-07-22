@@ -28,8 +28,10 @@ public class TaskService {
     private final AuthUtil authUtil;
     private final UserRepo userRepo;
 
-    public Iterable<Task> getAllTasks() {
-        return taskRepo.findAll();
+    public Iterable<Task> getAllTasks(String search) {
+
+        if (search == null) return taskRepo.findAll();
+        else return taskRepo.findByNameContaining(search);
     }
 
     public Task getTaskById(Integer id) throws NoSuchElementException, IllegalArgumentException {

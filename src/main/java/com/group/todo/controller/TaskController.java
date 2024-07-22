@@ -25,6 +25,7 @@ import com.group.todo.service.TaskService;
 
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -39,9 +40,9 @@ public class TaskController {
     }
 
     @GetMapping("/tasks")
-    public ResponseEntity<Iterable<TaskResponseDTO>> getAllTasks() {
+    public ResponseEntity<Iterable<TaskResponseDTO>> getAllTasks(@RequestParam(required = false) String search) {
         Collection<TaskResponseDTO> list = new LinkedList<>();
-        for (Task task : taskService.getAllTasks())
+        for (Task task : taskService.getAllTasks(search))
             list.add(new TaskResponseDTO(task));
 
         return new ResponseEntity<Iterable<TaskResponseDTO>>(list, HttpStatus.OK);
